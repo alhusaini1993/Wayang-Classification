@@ -66,6 +66,14 @@ export default function ImagePickerView() {
         style={{ display: 'none' }}
       />
 
+      {!image && (
+        <div className="welcome-section">
+          <div className="welcome-icon">🎭</div>
+          <h2>Klasifikasi Wayang</h2>
+          <p>Upload foto wayang untuk mengetahui nama dan informasi karakternya</p>
+        </div>
+      )}
+
       <button onClick={triggerFileSelect} disabled={isProcessing} className="upload-button">
         {image ? '📷 Pilih Gambar Lain' : '📤 Upload Gambar Wayang'}
       </button>
@@ -87,29 +95,46 @@ export default function ImagePickerView() {
 
       {result && !isProcessing && (
         <div className="result-container">
-          <h2>Hasil Klasifikasi</h2>
+          <div className="result-header">
+            <div className="result-badge">✨</div>
+            <h2>Hasil Klasifikasi</h2>
+          </div>
+
           <div className="main-result">
-            <h3>{result.predicted_class}</h3>
+            <div className="character-info">
+              <h3 className="character-name">{result.predicted_class}</h3>
+              {result.description && (
+                <p className="character-description">{result.description}</p>
+              )}
+            </div>
             <div className="confidence-badge">
-              {(result.confidence * 100).toFixed(1)}%
+              <span className="confidence-value">{(result.confidence * 100).toFixed(1)}%</span>
+              <span className="confidence-label">Akurasi</span>
             </div>
           </div>
 
-          {result.all_predictions && (
+          {result.all_predictions && result.all_predictions.length > 0 && (
             <div className="all-predictions">
-              <h4>Top 5 Prediksi:</h4>
-              {result.all_predictions.map((pred, index) => (
+              <h4>Kemungkinan Lainnya:</h4>
+              {result.all_predictions.slice(0, 5).map((pred, index) => (
                 <div key={index} className="prediction-row">
-                  <span className="prediction-class">{pred.class}</span>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: `${pred.confidence * 100}%` }}
-                    />
+                  <div className="prediction-info">
+                    <span className="prediction-class">{pred.class}</span>
+                    {pred.description && (
+                      <span className="prediction-desc">{pred.description}</span>
+                    )}
                   </div>
-                  <span className="prediction-confidence">
-                    {(pred.confidence * 100).toFixed(1)}%
-                  </span>
+                  <div className="prediction-right">
+                    <div className="progress-bar">
+                      <div
+                        className="progress-fill"
+                        style={{ width: `${pred.confidence * 100}%` }}
+                      />
+                    </div>
+                    <span className="prediction-confidence">
+                      {(pred.confidence * 100).toFixed(1)}%
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>

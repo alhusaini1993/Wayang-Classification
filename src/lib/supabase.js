@@ -33,21 +33,28 @@ export async function getClassificationHistory(limit = 50) {
 }
 
 export async function classifyImage(imageBase64) {
-  const response = await fetch(
-    `${supabaseUrl}/functions/v1/classify-wayang`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseAnonKey}`,
-      },
-      body: JSON.stringify({ image: imageBase64 }),
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/functions/v1/classify-wayang`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({ image: imageBase64 }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || 'Classification failed');
     }
-  );
 
-  if (!response.ok) {
-    throw new Error('Classification failed');
+    return data;
+  } catch (error) {
+    console.error('Classification API error:', error);
+    throw new Error(error.message || 'Failed to connect to classification service');
   }
-
-  return await response.json();
 }

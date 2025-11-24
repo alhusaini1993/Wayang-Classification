@@ -23,8 +23,15 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🎭 Klasifikasi Wayang</h1>
-        <p>Computer Vision App</p>
+        <div className="header-content">
+          <div className="logo-container">
+            <span className="logo">🎭</span>
+          </div>
+          <div className="header-text">
+            <h1>Klasifikasi Wayang</h1>
+            <p>Kenali Tokoh Wayang dengan AI</p>
+          </div>
+        </div>
       </header>
 
       <main className="app-content">
