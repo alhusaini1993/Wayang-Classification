@@ -34,8 +34,21 @@ Aplikasi Progressive Web App (PWA) untuk klasifikasi wayang menggunakan Computer
 - **Vite**: Build tool & dev server
 - **PWA (Workbox)**: Service worker untuk offline support
 - **Supabase**: Database dan Edge Functions
+- **Hugging Face**: Vision Transformer (ViT) untuk ML inference
 - **Web APIs**: Camera API, File API
 - **CSS3**: Modern responsive styling
+
+## Model Machine Learning
+
+Aplikasi ini menggunakan **Hugging Face Vision Transformer** untuk klasifikasi:
+
+- **Base Model**: google/vit-base-patch16-224
+- **Architecture**: Vision Transformer (ViT)
+- **Training**: Pre-trained ImageNet + fine-tune untuk wayang
+- **Inference**: Server-side via Supabase Edge Function
+- **Fallback**: Heuristic algorithm jika API tidak tersedia
+
+Untuk meningkatkan akurasi, lihat [TRAINING_GUIDE.md](./TRAINING_GUIDE.md)
 
 ## Instalasi
 
@@ -62,6 +75,19 @@ Buat file `.env` dengan isi:
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+## Setup Hugging Face (Optional - untuk akurasi maksimal)
+
+1. Buat akun di [huggingface.co](https://huggingface.co)
+2. Generate token di Settings > Access Tokens
+3. Set secret di Supabase Edge Functions:
+```bash
+supabase secrets set HUGGINGFACE_TOKEN=hf_xxxxxxxxxxxxx
+```
+
+Tanpa HF token, aplikasi akan menggunakan fallback algorithm.
+
+Untuk fine-tune model sendiri, lihat [TRAINING_GUIDE.md](./TRAINING_GUIDE.md)
 
 ## Cara Menggunakan
 
