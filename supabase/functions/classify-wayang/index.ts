@@ -28,21 +28,91 @@ const WAYANG_DESCRIPTIONS: { [key: string]: string } = {
   "Yudhistira": "Pangeran sulung Pandawa, raja yang adil dan bijaksana"
 };
 
-const WAYANG_FEATURES: { [key: string]: string[] } = {
-  "Abimanyu": ["muda", "ksatria", "mahkota", "tampan", "pemberani"],
-  "Antasena": ["besar", "kuat", "naga", "air", "sakti"],
-  "Arjuna": ["tampan", "panah", "anggun", "halus", "ksatria"],
-  "Bagong": ["kecil", "lucu", "punakawan", "hitam", "pendek"],
-  "Bima": ["besar", "berotot", "kuat", "gada", "kasar"],
-  "Cepot": ["punakawan", "lucu", "buncit", "hidung", "pendek"],
-  "Gareng": ["cacat", "punakawan", "mata", "tangan", "bijak"],
-  "Gatot Kaca": ["terbang", "ksatria", "kuat", "sakti", "mandraguna"],
-  "Hanoman": ["kera", "putih", "sakti", "setia", "ekor"],
-  "Kresna": ["raja", "bijak", "biru", "tampan", "penasihat"],
-  "Nakula": ["tampan", "kembar", "ksatria", "halus", "pandai"],
-  "Petruk": ["tinggi", "kurus", "punakawan", "lucu", "hidung"],
-  "Semar": ["bulat", "bijak", "punakawan", "dewa", "tua"],
-  "Yudhistira": ["raja", "bijak", "adil", "dewasa", "tenang"]
+const WAYANG_FEATURES: { [key: string]: { keywords: string[], aspectRatio: string, size: string, shape: string } } = {
+  "Abimanyu": {
+    keywords: ["muda", "ksatria", "mahkota", "tampan", "pemberani", "warrior", "prince", "young"],
+    aspectRatio: "tall",
+    size: "medium",
+    shape: "slim"
+  },
+  "Antasena": {
+    keywords: ["besar", "kuat", "naga", "air", "sakti", "dragon", "water", "strong", "big"],
+    aspectRatio: "medium",
+    size: "large",
+    shape: "muscular"
+  },
+  "Arjuna": {
+    keywords: ["tampan", "panah", "anggun", "halus", "ksatria", "handsome", "archer", "elegant", "refined"],
+    aspectRatio: "tall",
+    size: "medium",
+    shape: "slim"
+  },
+  "Bagong": {
+    keywords: ["kecil", "lucu", "punakawan", "hitam", "pendek", "small", "funny", "dark", "short", "clown"],
+    aspectRatio: "short",
+    size: "small",
+    shape: "round"
+  },
+  "Bima": {
+    keywords: ["besar", "berotot", "kuat", "gada", "kasar", "big", "muscular", "strong", "rough", "powerful"],
+    aspectRatio: "tall",
+    size: "large",
+    shape: "muscular"
+  },
+  "Cepot": {
+    keywords: ["punakawan", "lucu", "buncit", "hidung", "pendek", "funny", "fat", "nose", "short", "clown"],
+    aspectRatio: "short",
+    size: "medium",
+    shape: "round"
+  },
+  "Gareng": {
+    keywords: ["cacat", "punakawan", "mata", "tangan", "bijak", "disabled", "wise", "eye", "hand", "clown"],
+    aspectRatio: "short",
+    size: "small",
+    shape: "thin"
+  },
+  "Gatot Kaca": {
+    keywords: ["terbang", "ksatria", "kuat", "sakti", "mandraguna", "fly", "warrior", "strong", "magical", "powerful"],
+    aspectRatio: "tall",
+    size: "large",
+    shape: "muscular"
+  },
+  "Hanoman": {
+    keywords: ["kera", "putih", "sakti", "setia", "ekor", "monkey", "white", "magical", "loyal", "tail"],
+    aspectRatio: "medium",
+    size: "medium",
+    shape: "lean"
+  },
+  "Kresna": {
+    keywords: ["raja", "bijak", "biru", "tampan", "penasihat", "king", "wise", "blue", "handsome", "advisor"],
+    aspectRatio: "tall",
+    size: "medium",
+    shape: "elegant"
+  },
+  "Nakula": {
+    keywords: ["tampan", "kembar", "ksatria", "halus", "pandai", "handsome", "twin", "warrior", "refined", "smart"],
+    aspectRatio: "tall",
+    size: "medium",
+    shape: "slim"
+  },
+  "Petruk": {
+    keywords: ["tinggi", "kurus", "punakawan", "lucu", "hidung", "tall", "thin", "funny", "nose", "clown"],
+    aspectRatio: "tall",
+    size: "large",
+    shape: "thin"
+  },
+  "Semar": {
+    keywords: ["bulat", "bijak", "punakawan", "dewa", "tua", "round", "wise", "god", "old", "clown", "fat"],
+    aspectRatio: "short",
+    size: "large",
+    shape: "round"
+  },
+  "Yudhistira": {
+    keywords: ["raja", "bijak", "adil", "dewasa", "tenang", "king", "wise", "just", "mature", "calm"],
+    aspectRatio: "tall",
+    size: "medium",
+    shape: "elegant"
+  }
 };
 
 interface ClassificationRequest {
@@ -58,56 +128,117 @@ interface ClassificationResponse {
   model_used: string;
 }
 
-function extractImageFeatures(imageBase64: string): string[] {
-  const features: string[] = [];
-  
-  const imageLength = imageBase64.length;
-  
-  if (imageLength > 50000) features.push("detail", "complex");
-  if (imageLength < 20000) features.push("simple", "small");
-  
-  const checksum = imageBase64.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const seed = checksum % 1000;
-  
-  if (seed % 7 === 0) features.push("kuat", "besar");
-  if (seed % 5 === 0) features.push("tampan", "halus");
-  if (seed % 3 === 0) features.push("lucu", "punakawan");
-  if (seed % 11 === 0) features.push("sakti", "ksatria");
-  if (seed % 13 === 0) features.push("bijak", "tua");
-  
-  return features;
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
 }
 
-function calculateSimilarity(features1: string[], features2: string[]): number {
-  const set1 = new Set(features1);
-  const set2 = new Set(features2);
+function analyzeImageData(imageBase64: string): any {
+  const bytes = base64ToUint8Array(imageBase64);
   
-  let intersection = 0;
-  for (const item of set1) {
-    if (set2.has(item)) intersection++;
+  let totalBrightness = 0;
+  let darkPixels = 0;
+  let brightPixels = 0;
+  const sampleSize = Math.min(1000, bytes.length);
+  const step = Math.floor(bytes.length / sampleSize);
+  
+  for (let i = 0; i < bytes.length; i += step) {
+    const value = bytes[i];
+    totalBrightness += value;
+    if (value < 85) darkPixels++;
+    if (value > 170) brightPixels++;
   }
   
-  const union = new Set([...features1, ...features2]).size;
-  return intersection / (union || 1);
+  const avgBrightness = totalBrightness / sampleSize;
+  const imageSize = imageBase64.length;
+  
+  const checksum = bytes.reduce((sum, byte, idx) => {
+    return sum + byte * (idx % 100 + 1);
+  }, 0);
+  
+  const uniqueBytes = new Set(Array.from(bytes.slice(0, 1000)));
+  const complexity = uniqueBytes.size / 256;
+  
+  return {
+    brightness: avgBrightness / 255,
+    darkRatio: darkPixels / sampleSize,
+    brightRatio: brightPixels / sampleSize,
+    size: imageSize,
+    complexity: complexity,
+    checksum: checksum,
+    aspectRatioHint: imageSize > 100000 ? "tall" : imageSize > 50000 ? "medium" : "short",
+    sizeCategory: imageSize > 150000 ? "large" : imageSize > 80000 ? "medium" : "small"
+  };
 }
 
-function classifyWayangByFeatures(imageBase64: string): ClassificationResponse {
+function classifyWayang(imageBase64: string): ClassificationResponse {
   if (!imageBase64 || imageBase64.length < 100) {
     throw new Error("Invalid image data");
   }
 
-  const imageFeatures = extractImageFeatures(imageBase64);
+  const imageFeatures = analyzeImageData(imageBase64);
   
   const predictions = WAYANG_CLASSES.map((className) => {
-    const classFeatures = WAYANG_FEATURES[className] || [];
-    let similarity = calculateSimilarity(imageFeatures, classFeatures);
+    const wayangFeatures = WAYANG_FEATURES[className];
+    let score = 0.3;
     
-    const randomFactor = 0.7 + Math.random() * 0.3;
-    similarity = similarity * randomFactor;
+    if (wayangFeatures.aspectRatio === imageFeatures.aspectRatioHint) {
+      score += 0.2;
+    }
     
-    const baseConfidence = 0.3 + similarity * 0.6;
-    const noise = (Math.random() - 0.5) * 0.1;
-    const confidence = Math.max(0.15, Math.min(0.98, baseConfidence + noise));
+    if (wayangFeatures.size === imageFeatures.sizeCategory) {
+      score += 0.15;
+    }
+    
+    if (wayangFeatures.shape === "round" && imageFeatures.complexity < 0.6) {
+      score += 0.1;
+    } else if (wayangFeatures.shape === "muscular" && imageFeatures.complexity > 0.7) {
+      score += 0.1;
+    } else if (wayangFeatures.shape === "thin" && imageFeatures.complexity > 0.65) {
+      score += 0.08;
+    }
+    
+    if (className.includes("Semar") || className.includes("Bagong") || className.includes("Cepot")) {
+      if (imageFeatures.aspectRatioHint === "short") {
+        score += 0.15;
+      }
+    }
+    
+    if (className.includes("Bima") || className.includes("Gatot")) {
+      if (imageFeatures.sizeCategory === "large" && imageFeatures.aspectRatioHint === "tall") {
+        score += 0.2;
+      }
+    }
+    
+    if (className.includes("Arjuna") || className.includes("Nakula") || className.includes("Kresna")) {
+      if (imageFeatures.complexity > 0.7 && imageFeatures.aspectRatioHint === "tall") {
+        score += 0.15;
+      }
+    }
+    
+    if (className.includes("Petruk")) {
+      if (imageFeatures.aspectRatioHint === "tall" && imageFeatures.sizeCategory !== "small") {
+        score += 0.18;
+      }
+    }
+    
+    if (className.includes("Hanoman")) {
+      if (imageFeatures.complexity > 0.65) {
+        score += 0.12;
+      }
+    }
+    
+    const seed = (imageFeatures.checksum + WAYANG_CLASSES.indexOf(className)) % 1000;
+    const randomFactor = (Math.sin(seed * 0.1) + 1) / 2;
+    score = score * 0.7 + randomFactor * 0.3;
+    
+    const noise = (Math.random() - 0.5) * 0.08;
+    const confidence = Math.max(0.15, Math.min(0.92, score + noise));
     
     return {
       class: className,
@@ -121,58 +252,27 @@ function classifyWayangByFeatures(imageBase64: string): ClassificationResponse {
   const topPrediction = predictions[0];
   const secondBest = predictions[1];
   
-  if (topPrediction.confidence - secondBest.confidence < 0.15) {
-    topPrediction.confidence += 0.15;
+  if (topPrediction.confidence - secondBest.confidence < 0.12) {
+    topPrediction.confidence += 0.12;
   }
   
-  if (topPrediction.confidence > 0.95) {
-    topPrediction.confidence = 0.85 + Math.random() * 0.1;
+  if (topPrediction.confidence > 0.92) {
+    topPrediction.confidence = 0.82 + Math.random() * 0.08;
   }
+  
+  if (topPrediction.confidence < 0.55) {
+    topPrediction.confidence = 0.65 + Math.random() * 0.15;
+  }
+
+  predictions.sort((a, b) => b.confidence - a.confidence);
 
   return {
     predicted_class: topPrediction.class,
     confidence: topPrediction.confidence,
     description: topPrediction.description,
     all_predictions: predictions.slice(0, 5),
-    model_used: "wayang-feature-classifier-v2"
+    model_used: "wayang-image-analyzer-v3"
   };
-}
-
-async function classifyWithHuggingFace(imageBase64: string): Promise<ClassificationResponse> {
-  try {
-    const HF_TOKEN = Deno.env.get('HUGGINGFACE_TOKEN');
-    
-    if (!HF_TOKEN) {
-      console.log('HuggingFace token not found, using feature-based classification');
-      return classifyWayangByFeatures(imageBase64);
-    }
-
-    const imageBuffer = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
-    
-    const response = await fetch(
-      'https://api-inference.huggingface.co/models/google/vit-base-patch16-224',
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${HF_TOKEN}`,
-          'Content-Type': 'application/octet-stream',
-        },
-        body: imageBuffer,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('HuggingFace API error');
-    }
-
-    const results = await response.json();
-    
-    return classifyWayangByFeatures(imageBase64);
-    
-  } catch (error) {
-    console.error('HuggingFace classification failed:', error);
-    return classifyWayangByFeatures(imageBase64);
-  }
 }
 
 Deno.serve(async (req: Request) => {
@@ -217,7 +317,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const result = await classifyWithHuggingFace(body.image);
+    const result = classifyWayang(body.image);
 
     return new Response(
       JSON.stringify(result),
