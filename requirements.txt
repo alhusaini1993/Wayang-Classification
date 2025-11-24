@@ -5,3 +5,6 @@ torch
 torchvision
 timm
 pillow
+opencv-python
+streamlit-webrtc
+av
