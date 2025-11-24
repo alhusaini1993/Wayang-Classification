@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { classifyImage, saveClassification } from '../lib/supabase';
+import { classifyImageWithTF, loadModel, isModelSupported } from '../lib/tfModel';
 import './ImagePickerView.css';
 
 export default function ImagePickerView() {
@@ -7,7 +8,27 @@ export default function ImagePickerView() {
   const [result, setResult] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  const [useTFModel, setUseTFModel] = useState(true);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const initModel = async () => {
+      if (isModelSupported()) {
+        try {
+          await loadModel();
+          setModelLoaded(true);
+          console.log('TensorFlow.js model ready');
+        } catch (error) {
+          console.error('Failed to load TF model:', error);
+          setUseTFModel(false);
+        }
+      } else {
+        setUseTFModel(false);
+      }
+    };
+    initModel();
+  }, []);
 
   const handleFileSelect = async (event) => {
     const file = event.target.files?.[0];
@@ -32,9 +53,17 @@ export default function ImagePickerView() {
   const processImage = async (imageDataUrl) => {
     try {
       setIsProcessing(true);
-      const base64 = imageDataUrl.split(',')[1];
+      setError(null);
+      let classificationResult;
 
-      const classificationResult = await classifyImage(base64);
+      if (useTFModel && modelLoaded) {
+        console.log('Using TensorFlow.js for classification');
+        classificationResult = await classifyImageWithTF(imageDataUrl);
+      } else {
+        console.log('Using server-side classification');
+        const base64 = imageDataUrl.split(',')[1];
+        classificationResult = await classifyImage(base64);
+      }
 
       await saveClassification(
         imageDataUrl,

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { classifyImage, saveClassification } from '../lib/supabase';
+import { classifyImageWithTF, loadModel, isModelSupported } from '../lib/tfModel';
 import './CameraView.css';
 
 export default function CameraView({ onResult }) {
@@ -7,11 +8,27 @@ export default function CameraView({ onResult }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  const [useTFModel, setUseTFModel] = useState(true);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    startCamera();
+    const init = async () => {
+      if (isModelSupported()) {
+        try {
+          await loadModel();
+          setModelLoaded(true);
+        } catch (error) {
+          console.error('Failed to load TF model:', error);
+          setUseTFModel(false);
+        }
+      } else {
+        setUseTFModel(false);
+      }
+      startCamera();
+    };
+    init();
     return () => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
@@ -50,9 +67,14 @@ export default function CameraView({ onResult }) {
       ctx.drawImage(video, 0, 0);
 
       const imageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-      const base64 = imageDataUrl.split(',')[1];
 
-      const classificationResult = await classifyImage(base64);
+      let classificationResult;
+      if (useTFModel && modelLoaded) {
+        classificationResult = await classifyImageWithTF(imageDataUrl);
+      } else {
+        const base64 = imageDataUrl.split(',')[1];
+        classificationResult = await classifyImage(base64);
+      }
 
       await saveClassification(
         imageDataUrl,
