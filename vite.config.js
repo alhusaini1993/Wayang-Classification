@@ -7,13 +7,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'tensorflow': ['@tensorflow/tfjs', '@tensorflow/tfjs-converter'],
           'vendor': ['react', 'react-dom'],
           'supabase': ['@supabase/supabase-js']
         }
       }
-    },
-    chunkSizeWarningLimit: 1000
+    }
   },
   plugins: [
     react(),
