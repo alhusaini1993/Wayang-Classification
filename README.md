@@ -1,14 +1,15 @@
-# 🎭 Wayang Classifier Mobile App
+# 🎭 Wayang Classifier - Progressive Web App
 
-Aplikasi mobile untuk klasifikasi wayang menggunakan Computer Vision dan Deep Learning.
+Aplikasi Progressive Web App (PWA) untuk klasifikasi wayang menggunakan Computer Vision dan Deep Learning.
 
 ## Fitur Utama
 
-- **📹 Real-Time Scanning**: Scan wayang langsung menggunakan kamera
-- **📤 Upload Gambar**: Upload foto wayang dari galeri
-- **📋 History**: Lihat riwayat klasifikasi
-- **🎯 14 Karakter**: Mengenali 14 karakter wayang
+- **📹 Real-Time Camera Scanning**: Scan wayang langsung menggunakan kamera web
+- **📤 Upload Gambar**: Upload foto wayang dari device
+- **📋 History**: Lihat riwayat klasifikasi dengan auto-refresh
+- **📱 PWA Support**: Install di device sebagai app native
 - **☁️ Cloud Storage**: History tersimpan di Supabase
+- **🚀 Fast & Lightweight**: Built with Vite untuk performa optimal
 
 ## Karakter Wayang yang Didukung
 
@@ -29,11 +30,12 @@ Aplikasi mobile untuk klasifikasi wayang menggunakan Computer Vision dan Deep Le
 
 ## Teknologi
 
-- **React Native + Expo**: Framework mobile
+- **React 18**: UI framework
+- **Vite**: Build tool & dev server
+- **PWA (Workbox)**: Service worker untuk offline support
 - **Supabase**: Database dan Edge Functions
-- **Expo Camera**: Real-time scanning
-- **Expo Image Picker**: Upload gambar
-- **TypeScript**: Type safety
+- **Web APIs**: Camera API, File API
+- **CSS3**: Modern responsive styling
 
 ## Instalasi
 
@@ -42,55 +44,84 @@ Aplikasi mobile untuk klasifikasi wayang menggunakan Computer Vision dan Deep Le
 npm install
 ```
 
-2. Jalankan aplikasi:
+2. Jalankan development server:
 ```bash
-npm start
+npm run dev
 ```
 
-3. Scan QR code dengan Expo Go app (iOS/Android)
+3. Build untuk production:
+```bash
+npm run build
+```
+
+## Environment Variables
+
+Buat file `.env` dengan isi:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
 ## Cara Menggunakan
 
-### Real-Time Scanning
+### Real-Time Camera Scanning
 1. Buka tab "Scan"
-2. Arahkan kamera ke wayang
-3. Tekan tombol capture
-4. Lihat hasil klasifikasi
+2. Izinkan akses kamera
+3. Arahkan kamera ke wayang
+4. Klik tombol capture
+5. Lihat hasil klasifikasi
 
 ### Upload Gambar
 1. Buka tab "Upload"
-2. Pilih gambar dari galeri
-3. Tunggu proses klasifikasi
+2. Klik "Upload Gambar Wayang"
+3. Pilih gambar dari device
 4. Lihat hasil dan top 5 prediksi
 
 ### History
 1. Buka tab "History"
 2. Lihat semua klasifikasi sebelumnya
-3. Pull to refresh untuk update
+3. Klik refresh untuk update
 
 ## Struktur Project
 
 ```
 .
-├── App.tsx                      # Main app component
-├── components/
-│   ├── CameraView.tsx          # Real-time scanning
-│   ├── ImagePickerView.tsx     # Upload gambar
-│   └── HistoryView.tsx         # History klasifikasi
-├── lib/
-│   └── supabase.ts             # Supabase client & functions
+├── index.html                   # Entry point HTML
+├── vite.config.js              # Vite & PWA configuration
+├── src/
+│   ├── main.jsx                # React entry point
+│   ├── App.jsx                 # Main app component
+│   ├── App.css                 # App styles
+│   ├── index.css               # Global styles
+│   ├── components/
+│   │   ├── CameraView.jsx      # Real-time camera scanning
+│   │   ├── CameraView.css
+│   │   ├── ImagePickerView.jsx # Upload gambar
+│   │   ├── ImagePickerView.css
+│   │   ├── HistoryView.jsx     # History klasifikasi
+│   │   └── HistoryView.css
+│   └── lib/
+│       └── supabase.js         # Supabase client & functions
 ├── supabase/
+│   ├── migrations/             # Database migrations
 │   └── functions/
 │       └── classify-wayang/    # Edge function untuk API
-├── package.json
-└── app.json
+└── package.json
 ```
+
+## PWA Features
+
+- **Installable**: Dapat diinstall sebagai app di device
+- **Offline Support**: Service worker untuk caching
+- **Fast Loading**: Pre-cache assets penting
+- **Mobile Optimized**: Responsive design untuk semua devices
 
 ## API
 
 Edge Function tersedia di:
 ```
-https://0ec90b57d6e95fcbda19832f.supabase.co/functions/v1/classify-wayang
+https://[project-id].supabase.co/functions/v1/classify-wayang
 ```
 
 Request:
@@ -112,9 +143,23 @@ Response:
 
 ## Development
 
-- Edit `App.tsx` untuk mengubah struktur app
-- Edit components di folder `components/`
-- Modifikasi Edge Function di `supabase/functions/classify-wayang/`
+```bash
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Browser Support
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers dengan Camera API support
 
 ## License
 

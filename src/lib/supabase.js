@@ -1,34 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export interface Classification {
-  id: string;
-  image_url: string;
-  predicted_class: string;
-  confidence: number;
-  model_used: string;
-  created_at: string;
-}
-
-export async function saveClassification(
-  imageUrl: string,
-  predictedClass: string,
-  confidence: number,
-  modelUsed: string
-) {
+export async function saveClassification(imageUrl, predictedClass, confidence, modelUsed) {
   const { data, error } = await supabase
     .from('classifications')
     .insert({
@@ -44,7 +21,7 @@ export async function saveClassification(
   return data;
 }
 
-export async function getClassificationHistory(limit: number = 50) {
+export async function getClassificationHistory(limit = 50) {
   const { data, error } = await supabase
     .from('classifications')
     .select('*')
@@ -52,10 +29,10 @@ export async function getClassificationHistory(limit: number = 50) {
     .limit(limit);
 
   if (error) throw error;
-  return data as Classification[];
+  return data;
 }
 
-export async function classifyImage(imageBase64: string) {
+export async function classifyImage(imageBase64) {
   const response = await fetch(
     `${supabaseUrl}/functions/v1/classify-wayang`,
     {

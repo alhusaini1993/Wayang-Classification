@@ -1,0 +1,168 @@
+.image-picker-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upload-button {
+  width: 100%;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.upload-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.upload-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.image-preview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #666;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  margin-top: 15px;
+  background-color: #f44336;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.result-container {
+  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-container h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.main-result {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.main-result h3 {
+  font-size: 32px;
+  color: #4CAF50;
+  margin: 0 0 10px 0;
+}
+
+.confidence-badge {
+  display: inline-block;
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.all-predictions h4 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.prediction-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.prediction-class {
+  min-width: 100px;
+  font-size: 14px;
+  color: #666;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.prediction-confidence {
+  min-width: 50px;
+  text-align: right;
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .image-picker-container {
+    padding: 15px;
+  }
+
+  .prediction-class {
+    min-width: 80px;
+    font-size: 12px;
+  }
+
+  .prediction-confidence {
+    font-size: 12px;
+  }
+}

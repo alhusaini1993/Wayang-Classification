@@ -1,0 +1,144 @@
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #000;
+  position: relative;
+}
+
+.camera-view {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.result-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.result-box {
+  background-color: rgba(76, 175, 80, 0.95);
+  padding: 15px 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.result-box h3 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.result-box p {
+  color: #fff;
+  font-size: 18px;
+  margin: 0;
+}
+
+.camera-controls {
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.capture-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 4px solid #4CAF50;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  padding: 0;
+}
+
+.capture-button:active {
+  transform: scale(0.95);
+}
+
+.capture-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.capture-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #4CAF50;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.camera-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.camera-error p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.retry-button {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: #45a049;
+}
+
+.error-message {
+  position: absolute;
+  bottom: 120px;
+  left: 20px;
+  right: 20px;
+  background-color: rgba(244, 67, 54, 0.95);
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+}
